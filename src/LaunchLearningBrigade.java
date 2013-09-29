@@ -1,6 +1,7 @@
-import java.io.IOException;
-
 import agent.LearningFireBrigade;
+
+
+import java.io.IOException;
 
 import rescuecore2.components.ComponentLauncher;
 import rescuecore2.components.TCPComponentLauncher;
@@ -43,8 +44,8 @@ public final class LaunchLearningBrigade {
             int port = config.getIntValue(Constants.KERNEL_PORT_NUMBER_KEY, Constants.DEFAULT_KERNEL_PORT_NUMBER);
             String host = config.getValue(Constants.KERNEL_HOST_NAME_KEY, Constants.DEFAULT_KERNEL_HOST_NAME);
             int fb = -1;
-            int pf = 0;
-            int at = 0;
+            int pf = -1;
+            int at = -1;
             // CHECKSTYLE:OFF:ModifiedControlVariable
             for (int i = 0; i < args.length; ++i) {
                 if (args[i].equals(FIRE_BRIGADE_FLAG)) {
@@ -80,9 +81,9 @@ public final class LaunchLearningBrigade {
 
     private static void connect(ComponentLauncher launcher, int fb, int pf, int at, Config config) throws InterruptedException, ConnectionException {
         int i = 0;
-       
+        
         try {
-            while (pf-- != 0) {
+            while (fb-- != 0) {
                 Logger.info("Connecting fire brigade " + (i++) + "...");
                 launcher.connect(new LearningFireBrigade());
                 Logger.info("success");

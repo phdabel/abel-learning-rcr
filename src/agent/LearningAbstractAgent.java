@@ -6,11 +6,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import message.MessageType;
 import message.MyMessage;
 import message.Serializer;
 
@@ -37,6 +39,8 @@ Abstract base class for MyAgent.
 public abstract class LearningAbstractAgent<E extends StandardEntity> extends StandardAgent<E> {
 	
 	private static final int RANDOM_WALK_LENGTH = 50;
+	protected Double tau = 0.5;
+	protected Double alpha = 0.5;
 
     private static final String SAY_COMMUNICATION_MODEL = StandardCommunicationModel.class.getName();
     private static final String SPEAK_COMMUNICATION_MODEL = ChannelCommunicationModel.class.getName();
@@ -53,7 +57,24 @@ public abstract class LearningAbstractAgent<E extends StandardEntity> extends St
        Whether to use AKSpeak messages or not.
     */
     protected boolean useSpeak;
+    
+    /**
+     *  lista de agentes
+     */
+    protected List<EntityID> coleagues = new ArrayList<EntityID>();
+    
+    /**
+     * lista de tarefas
+     */
+    protected Map<EntityID, Integer> tasks = new HashMap<EntityID, Integer>();
+    
+    /**
+     *  utilidade das tarefas
+     */
+    protected Map<EntityID, Double> utility = new HashMap<EntityID, Double>(); 
 
+    protected Map<EntityID, Integer> allocationTable = new HashMap<EntityID, Integer>();
+    
     /**
        Cache of building IDs.
     */
@@ -211,11 +232,44 @@ public abstract class LearningAbstractAgent<E extends StandardEntity> extends St
                 try {
                     Object object = Serializer.deserialize(msg);
                     if (object instanceof String) {
-                    	System.out.println(object.toString());
-                    	//MyMessage tmp = (MyMessage)object;
-                    	//this.getReceivedMessage().add(tmp);
-                    }else{
+                    	String message = (String)object;
                     	
+                        String[] s = message.split("\\|");
+                    	                    	
+                    	switch(s[0])
+                    	{
+                    		case "building":
+                    			//EntityID buildingID, EntityID position, Integer fieryness
+                    			MyMessage building = new MyMessage(
+                    					new EntityID(Integer.parseInt(s[1])),
+                    					new EntityID(Integer.parseInt(s[2])),
+                    					Integer.parseInt(s[3])
+                    					);
+                    			this.getReceivedMessage().add(building);
+                    			break;
+                    		case "extinguish":
+                    			MyMessage extinguish = new MyMessage(
+                    					new EntityID(Integer.parseInt(s[1])),
+                    					new EntityID(Integer.parseInt(s[2]))
+                    					);
+                    			this.getReceivedMessage().add(extinguish);
+                    			break;
+                    		case "release":
+                    			MyMessage release = new MyMessage(
+                    					new EntityID(Integer.parseInt(s[1])));
+                    			this.getReceivedMessage().add(release);
+                    			break;
+                    		case "announcement":
+                    			MyMessage announce = new MyMessage();
+                    			announce.setType(MessageType.ANNOUNCE_AGENT);
+                    			announce.setAgentID(new EntityID(Integer.parseInt(s[1])));
+                    			announce.setPosition(new EntityID(Integer.parseInt(s[2])));
+                    			this.getReceivedMessage().add(announce);
+                    			break;
+                    	}
+                    }else{
+                    	                    	
+                    	System.out.println("Mensagem desconhecida "+object.toString());
                     }
                 } catch (IOException e) {
                     Logger.error("Não entendi a mensagem!" + e.getMessage());

@@ -4,10 +4,10 @@ import java.io.Serializable;
 
 public enum MessageType implements Serializable{
 	
-	BURNING_BUILDING("Announcement"),
-	AGENT_EXTINGUISH("Agent going to extinguish fire"),
-	AGENT_RELEASE("Agent releasing building"),
-	ANNOUNCE_AGENT("Agent announcement");
+	BURNING_BUILDING("building"),
+	AGENT_EXTINGUISH("extinguish"),
+	AGENT_RELEASE("release"),
+	ANNOUNCE_AGENT("announcement");
 	
 	String name;
 	
