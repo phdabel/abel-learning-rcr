@@ -8,6 +8,9 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 
+import message.MessageType;
+import message.MyMessage;
+
 import rescuecore2.log.Logger;
 import rescuecore2.messages.Command;
 import rescuecore2.standard.entities.Building;
@@ -17,11 +20,10 @@ import rescuecore2.standard.entities.StandardEntity;
 import rescuecore2.standard.entities.StandardEntityURN;
 import rescuecore2.worldmodel.ChangeSet;
 import rescuecore2.worldmodel.EntityID;
-import sample.AbstractSampleAgent;
 import sample.DistanceSorter;
 
 
-public class LearningFireBrigade extends AbstractSampleAgent<FireBrigade> {
+public class LearningFireBrigade extends LearningAbstractAgent<FireBrigade> {
 	private static final String MAX_WATER_KEY = "fire.tank.maximum";
     private static final String MAX_DISTANCE_KEY = "fire.extinguish.max-distance";
     private static final String MAX_POWER_KEY = "fire.extinguish.max-sum";
@@ -50,7 +52,17 @@ public class LearningFireBrigade extends AbstractSampleAgent<FireBrigade> {
         if (time == config.getIntValue(kernel.KernelConstants.IGNORE_AGENT_COMMANDS_KEY)) {
             // Subscribe to channel 1
             sendSubscribe(time, 1);
+            MyMessage eu = new MyMessage();
+            eu.setType(MessageType.ANNOUNCE_AGENT);
+            eu.setAgentID(me().getID());
+            eu.setPosition(me().getPosition());
+            
+            this.sendMessage(time, 1, eu);
+            
         }
+        System.out.println("eu "+me().getID()+" - time "+time);
+        this.heardMessage(heard);
+    	
         for (Command next : heard) {
             Logger.debug("Heard " + next);
         }
@@ -133,6 +145,12 @@ public class LearningFireBrigade extends AbstractSampleAgent<FireBrigade> {
             return null;
         }
         return search.breadthFirstSearch(me().getPosition(), objectsToIDs(targets));
-    }	
+    }
+
+	@Override
+	protected void stopCurrentTask() {
+		// TODO Auto-generated method stub
+		
+	}	
 
 }

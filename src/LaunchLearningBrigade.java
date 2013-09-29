@@ -83,7 +83,7 @@ public final class LaunchLearningBrigade {
        
         try {
             while (pf-- != 0) {
-                Logger.info("Connecting police force " + (i++) + "...");
+                Logger.info("Connecting fire brigade " + (i++) + "...");
                 launcher.connect(new LearningFireBrigade());
                 Logger.info("success");
             }
