@@ -79,12 +79,12 @@ public class LearningFireBrigade extends LearningAbstractAgent<FireBrigade> {
     		switch(e.getType())
     		{
 			case AGENT_EXTINGUISH:
-				
+				System.out.println("Agente "+e.getAgentID()+" extinguindo fogo em "+e.getBuildingID());
 				this.allocationTable.put(e.getAgentID(), e.getBuildingID().getValue());
 				
 				break;
 			case AGENT_RELEASE:
-				
+				System.out.println("Agente "+e.getAgentID()+" liberando tarefa");
 				this.allocationTable.put(e.getAgentID(), 0);
 				
 				break;
@@ -136,60 +136,63 @@ public class LearningFireBrigade extends LearningAbstractAgent<FireBrigade> {
     	 * e retorno da ação de maior probabilidade
     	 * envio da ação que será feita
     	 */
-    	EntityID maxAction = null;
-    	Double maxProbability = 0.0;
-    	for(EntityID b : this.tasks.keySet())
-    	{
-    		Double cost = 0.0;
-    		if(this.walkCost.get(b) != null){
-    			cost = this.walkCost.get(b).doubleValue();
-    			
-    		}
-    		Double p1 = (Double)((1-cost)/maxWalkCost);
-    		Double e = Math.exp(this.utility.get(b)*this.tau);
-    		Double e2 = 0.0;
-    		for(int i = 0; i < this.coleagues.size(); i++)
-    		{
-    			e2 = e2 + e;
-    		}
-    		Double p2 = p1 * (e/e2);
-    		if(p2 > maxProbability)
-    		{
-    			maxProbability = p2;
-    			maxAction = b;
-    		}
-    		this.probability.put(b, p2);
-    	}
-    	if(maxAction != null){
-    		this.allocationTable.put(me().getID(), maxAction.getValue());
-    		if(this.currentTarget == 0){    		
-    			MyMessage extinguishMessage = new MyMessage(me().getID(), maxAction);
-    			this.sendMessage(time, 1, extinguishMessage);
-    			this.currentTarget = maxAction.getValue();
-    		}else if(this.currentTarget != maxAction.getValue()){
-    			MyMessage releaseMessage = new MyMessage(me().getID());
-        		this.sendMessage(time, 1, releaseMessage);
-        	
-        		this.currentTarget = maxAction.getValue();
-        		MyMessage extinguishMessage = new MyMessage(me().getID(), maxAction);
-    			this.sendMessage(time, 1, extinguishMessage);
-    		}
+    	if(this.currentTarget == 0){
     	
-    		/**
-    	 	* calculo da recompensa
-    	 	*/
-    		Double localReward = 0.0;
-    		Double noMeLocalReward = 0.0;
-    		int x = Collections.frequency(this.allocationTable.values(), maxAction.getValue());
-    		localReward = (x*Math.exp(-x/this.tasks.get(maxAction)));
-    		noMeLocalReward = ((x-1)*Math.exp((-(x-1))/this.tasks.get(maxAction)));
-    		Double reward = localReward - noMeLocalReward;
-    	
-    		/**
-    		 *  atualizacao da utilidade
-    	 	*/
-    		Double utilityTmp = (1 - this.alpha) * this.utility.get(maxAction) + this.alpha * reward;
-    		this.utility.put(maxAction, utilityTmp);
+    		EntityID maxAction = null;
+	    	Double maxProbability = 0.0;
+	    	for(EntityID b : this.tasks.keySet())
+	    	{
+	    		Double cost = 0.0;
+	    		if(this.walkCost.get(b) != null){
+	    			cost = this.walkCost.get(b).doubleValue();
+	    			
+	    		}
+	    		Double p1 = (Double)((1-cost)/maxWalkCost);
+	    		Double e = Math.exp(this.utility.get(b)*this.tau);
+	    		Double e2 = 0.0;
+	    		for(int i = 0; i < this.coleagues.size(); i++)
+	    		{
+	    			e2 = e2 + e;
+	    		}
+	    		Double p2 = p1 * (e/e2);
+	    		if(p2 > maxProbability)
+	    		{
+	    			maxProbability = p2;
+	    			maxAction = b;
+	    		}
+	    		this.probability.put(b, p2);
+	    	}
+	    	if(maxAction != null){
+	    		this.allocationTable.put(me().getID(), maxAction.getValue());
+	    		if(this.currentTarget == 0){    		
+	    			MyMessage extinguishMessage = new MyMessage(me().getID(), maxAction);
+	    			this.sendMessage(time, 1, extinguishMessage);
+	    			this.currentTarget = maxAction.getValue();
+	    		}else if(this.currentTarget != maxAction.getValue()){
+	    			MyMessage releaseMessage = new MyMessage(me().getID());
+	        		this.sendMessage(time, 1, releaseMessage);
+	        	
+	        		this.currentTarget = maxAction.getValue();
+	        		MyMessage extinguishMessage = new MyMessage(me().getID(), maxAction);
+	    			this.sendMessage(time, 1, extinguishMessage);
+	    		}
+	    	
+	    		/**
+	    	 	* calculo da recompensa
+	    	 	*/
+	    		Double localReward = 0.0;
+	    		Double noMeLocalReward = 0.0;
+	    		int x = Collections.frequency(this.allocationTable.values(), maxAction.getValue());
+	    		localReward = (x*Math.exp(-x/this.tasks.get(maxAction)));
+	    		noMeLocalReward = ((x-1)*Math.exp((-(x-1))/this.tasks.get(maxAction)));
+	    		Double reward = localReward - noMeLocalReward;
+	    	
+	    		/**
+	    		 *  atualizacao da utilidade
+	    	 	*/
+	    		Double utilityTmp = (1 - this.alpha) * this.utility.get(maxAction) + this.alpha * reward;
+	    		this.utility.put(maxAction, utilityTmp);
+	    	}
     	}
         for (Command next : heard) {
             Logger.debug("Heard " + next);
@@ -232,17 +235,21 @@ public class LearningFireBrigade extends LearningAbstractAgent<FireBrigade> {
         }
         
      // Can we extinguish any right now?
-        if(maxAction != null){
+        
+        if(this.currentTarget != 0){
+        	EntityID maxAction = new EntityID(this.currentTarget);
         	if(model.getDistance(getID(), maxAction) <= maxDistance)
     		{
     			Logger.info("Extinguishing " + maxAction);
             	sendExtinguish(time, maxAction, maxPower);
             	sendSpeak(time, 1, ("Extinguishing " + maxAction).getBytes());
+            	this.currentTarget = 0;
             	return;        		
     		}
         }
         // Plan a path to a fire
-        if(maxAction != null){
+        if(this.currentTarget != 0){
+        	EntityID maxAction = new EntityID(this.currentTarget);
         	List<EntityID> caminho = planPathToFire(maxAction);
         	if(caminho != null)
         	{
@@ -251,15 +258,7 @@ public class LearningFireBrigade extends LearningAbstractAgent<FireBrigade> {
         		return;
         	}
         }
-        /*
-        for (EntityID next : all) {
-            List<EntityID> path = planPathToFire(next);
-            if (path != null) {
-                Logger.info("Moving to target");
-                sendMove(time, path);
-                return;
-            }
-        }*/
+        
         List<EntityID> path = null;
         Logger.debug("Couldn't plan a path to a fire.");
         path = randomWalk();
