@@ -3,6 +3,8 @@ import agent.LearningFireBrigade;
 
 import java.io.IOException;
 
+import experiment.dao.Experiment;
+
 import rescuecore2.components.ComponentLauncher;
 import rescuecore2.components.TCPComponentLauncher;
 import rescuecore2.components.ComponentConnectionException;
@@ -34,6 +36,8 @@ public final class LaunchLearningBrigade {
        @param args The following arguments are understood: -p <port>, -h <hostname>, -fb <fire brigades>, -pf <police forces>, -at <ambulance teams>
     */
     public static void main(String[] args) {
+    	
+    	Experiment experiment = new Experiment(1,"experimento teste robocup");    	
         Logger.setLogContext("sample");
         try {
             Registry.SYSTEM_REGISTRY.registerEntityFactory(StandardEntityFactory.INSTANCE);
