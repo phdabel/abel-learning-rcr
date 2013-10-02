@@ -12,14 +12,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import experiment.dao.Agent;
+import experiment.dao.Experiment;
 import message.MessageType;
 import message.MyMessage;
 import message.Serializer;
-
 import rescuecore2.Constants;
 import rescuecore2.log.Logger;
 import rescuecore2.messages.Command;
-
 import rescuecore2.worldmodel.EntityID;
 import rescuecore2.standard.components.StandardAgent;
 import rescuecore2.standard.entities.StandardEntity;
@@ -30,7 +30,6 @@ import rescuecore2.standard.entities.Building;
 import rescuecore2.standard.entities.Human;
 import rescuecore2.standard.entities.Refuge;
 import rescuecore2.standard.entities.Road;
-
 import sample.SampleSearch;
 /**
 Abstract base class for MyAgent.
@@ -41,6 +40,8 @@ public abstract class LearningAbstractAgent<E extends StandardEntity> extends St
 	private static final int RANDOM_WALK_LENGTH = 50;
 	protected Double tau = 0.5;
 	protected Double alpha = 0.5;
+	protected Agent agent = null;
+	private Experiment experiment = null;
 
     private static final String SAY_COMMUNICATION_MODEL = StandardCommunicationModel.class.getName();
     private static final String SPEAK_COMMUNICATION_MODEL = ChannelCommunicationModel.class.getName();
@@ -324,5 +325,13 @@ public abstract class LearningAbstractAgent<E extends StandardEntity> extends St
         }
         return result;
     }
+
+	public Experiment getExperiment() {
+		return experiment;
+	}
+
+	public void setExperiment(Experiment experiment) {
+		this.experiment = experiment;
+	}
 
 }

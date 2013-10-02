@@ -30,14 +30,14 @@ public final class LaunchLearningBrigade {
     private static final String CIVILIAN_FLAG = "-cv";
 
     private LaunchLearningBrigade() {}
+    public static Experiment experiment = new Experiment(1, "experimento teste robocup");
 
     /**
        Launch 'em!
        @param args The following arguments are understood: -p <port>, -h <hostname>, -fb <fire brigades>, -pf <police forces>, -at <ambulance teams>
     */
     public static void main(String[] args) {
-    	
-    	Experiment experiment = new Experiment(1,"experimento teste robocup");    	
+    	    	
         Logger.setLogContext("sample");
         try {
             Registry.SYSTEM_REGISTRY.registerEntityFactory(StandardEntityFactory.INSTANCE);
@@ -89,7 +89,7 @@ public final class LaunchLearningBrigade {
         try {
             while (fb-- != 0) {
                 Logger.info("Connecting fire brigade " + (i++) + "...");
-                launcher.connect(new LearningFireBrigade());
+                launcher.connect(new LearningFireBrigade(experiment, fb));
                 Logger.info("success");
             }
         }

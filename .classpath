@@ -33,5 +33,6 @@
 	<classpathentry kind="lib" path="lib/trove-0.1.8.jar"/>
 	<classpathentry kind="lib" path="lib/uncommons-maths-1.2.jar"/>
 	<classpathentry kind="lib" path="lib/xml-0.0.6.jar"/>
+	<classpathentry kind="lib" path="lib/mongo-java-driver-2.11.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -15,7 +15,7 @@ import java.util.Arrays;
 
 public class Connection {
 	
-	private static Connection instance;
+	private static Connection instance = null;
 	private DB database;
 	private MongoClient mongoClient;
 	

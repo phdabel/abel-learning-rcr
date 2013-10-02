@@ -10,10 +10,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.mongodb.BasicDBObject;
 
+import experiment.dao.Agent;
+import experiment.dao.Experiment;
 import message.MessageType;
 import message.MyMessage;
-
 import rescuecore2.log.Logger;
 import rescuecore2.messages.Command;
 import rescuecore2.standard.entities.Building;
@@ -39,7 +41,16 @@ public class LearningFireBrigade extends LearningAbstractAgent<FireBrigade> {
     private Map<EntityID, Integer>walkCost = new HashMap<EntityID, Integer>();
     
 
-    @Override
+    public LearningFireBrigade(Experiment experiment, int fb) {
+		super();
+		//ajusta o experimento para o valor passado como parâmetro no Launch
+		this.setExperiment(experiment);
+		this.agent = new Agent(experiment, fb, "fireBrigade", 5000);
+		//this.agent.setCurrentPosition(me().getPosition().getValue());
+		
+	}
+
+	@Override
     public String toString() {
         return "Learning Fire Brigade - Abel";
     }

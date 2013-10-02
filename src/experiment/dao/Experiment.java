@@ -16,7 +16,7 @@ public class Experiment extends BasicDBObject {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	DBCollection experiments = Connection.getInstance().getCollection("Experiments");
+	protected DBCollection experiments = Connection.getInstance().getCollection("Experiments");
 	private int id;
 	private String name;
 	private List<Agent> agents;
@@ -32,11 +32,15 @@ public class Experiment extends BasicDBObject {
 		this.setAgents(new ArrayList<Agent>());
 		this.setTasks(new ArrayList<Task>());
 		this.setStates(new ArrayList<State>());
-
+		
 		this.postData();
 		
 		
 		
+	}
+	
+	public DBCollection getExperiment(){
+		return this.experiments;
 	}
 	
 	private WriteResult postData(){
@@ -47,7 +51,7 @@ public class Experiment extends BasicDBObject {
 		put("tasks", this.getTasks());
 		put("states", this.getStates());
 		return experiments.insert(this);
-	
+		
 	}
 	
 	private Object getData(String field){
