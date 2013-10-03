@@ -3,6 +3,8 @@ package experiment.dao;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
 import com.mongodb.WriteResult;
 
 public class Task extends BasicDBObject{
@@ -47,15 +49,39 @@ public class Task extends BasicDBObject{
 	private void create(){
 		
 		put("id", id);
-		this.tasks.ensureIndex(new BasicDBObject("id", id));
 		put("experiment_id", experiment.getId());
-		this.tasks.ensureIndex(new BasicDBObject("experiment_id", experiment.getId()));
 		put("run_id", run.getId());
-		this.tasks.ensureIndex(new BasicDBObject("run_id", run.getId()));
-		this.tasks.ensureIndex(this.primaryKey);
 		put("type", type);
 		
-		tasks.insert(this);
+		if(tasks.count()==0){
+			this.tasks.ensureIndex(new BasicDBObject("id", id));
+			this.tasks.ensureIndex(new BasicDBObject("experiment_id", experiment.getId()));
+			this.tasks.ensureIndex(new BasicDBObject("run_id", run.getId()));
+			this.tasks.ensureIndex(this.primaryKey);
+			
+		}
+		
+		if(tasks.find(this.primaryKey).count() == 0){
+			
+			tasks.insert(this);
+		}else{
+			DBObject object = tasks.find(this.primaryKey).next();
+			
+			this.setId((int)object.get("id"));
+			this.setTemperature((int)object.get("temperature"));
+			this.setFieryness((int)object.get("fieryness"));
+			this.setTotalArea((int)object.get("totalArea"));
+			this.setFloor((int)object.get("floor"));
+			this.setMatter((String)object.get("matter"));
+			if(object.containsField("cost")){
+				this.setCost((int)object.get("cost"));
+			}
+			if(object.containsField("type")){
+				this.setType((String)object.get("type"));
+			}
+			
+			
+		}
 	}
 	
 	//update com inserção de campo
@@ -116,50 +142,82 @@ public class Task extends BasicDBObject{
 		this.id = id;
 	}
 	public String getType() {
-		return (String)this.getData("type");
+		if(this.containsField("type")){
+			return (String)this.getData("type");
+		}else{
+			return null;
+		}
 	}
 	public void setType(String type) {
 		this.type = type;
 	}
 	public Integer getTotalArea() {
-		return (Integer)this.getData("totalArea");
+		if(this.containsField("totalArea")){
+			return (Integer)this.getData("totalArea");
+		}else{
+			return null;
+		}
 	}
 	public void setTotalArea(Integer totalArea) {
 		this.totalArea = totalArea;
 	}
 	public Integer getFloor() {
-		return (Integer)this.getData("floor");
+		if(this.containsField("floor")){
+			return (Integer)this.getData("floor");
+		}else{
+			return null;
+		}
 	}
 	public void setFloor(Integer floor) {
 		this.floor = floor;
 	}
 	public Integer getCost() {
-		return (Integer)this.getData("cost");
+		if(this.containsField("cost")){
+			return (Integer)this.getData("cost");
+		}else{
+			return null;
+		}
 	}
 	public void setCost(Integer cost) {
 		this.cost = cost;
 	}
 	public Integer getFieryness() {
-		return (Integer)this.getData("fieryness");
+		if(this.containsField("fieryness")){
+			return (Integer)this.getData("fieryness");
+		}else{
+			return null;
+		}
 	}
 	public void setFieryness(Integer fieryness) {
 		this.fieryness = fieryness;
 	}
 	public Integer getTemperature() {
-		return (Integer)this.getData("temperature");
+		if(this.containsField("temperature")){
+			return (Integer)this.getData("temperature");
+		}else{
+			return null;
+		}
 	}
 	public void setTemperature(Integer temperature) {
 		this.temperature = temperature;
 	}
 	public Integer getBrokenness() {
-		return (Integer)this.getData("brokenness");
+		if(this.containsField("brokenness")){
+			return (Integer)this.getData("brokenness");
+		}else{
+			return null;
+		}
 	}
 	public void setBrokenness(Integer brokenness) {
 		this.brokenness = brokenness;
 	}
 
 	public String getMatter() {
-		return (String)this.getData("matter");
+		if(this.containsField("matter")){
+			return (String)this.getData("matter");
+		}else{
+			return null;
+		}
 	}
 
 	public void setMatter(String matter) {
@@ -167,7 +225,11 @@ public class Task extends BasicDBObject{
 	}
 	
 	public String getRun() {
-		return (String)this.getData("run");
+		if(this.containsField("run_id")){
+			return (String)this.getData("run_id");
+		}else{
+			return null;
+		}
 	}
 
 	public void setRun(Run run) {
@@ -175,7 +237,11 @@ public class Task extends BasicDBObject{
 	}
 
 	public String getExperiment() {
-		return (String)this.getData("experiment_id");
+		if(this.containsField("experiment_id")){
+			return (String)this.getData("experiment_id");
+		}else{
+			return null;
+		}
 	}
 
 	public void setExperiment(Experiment experiment) {

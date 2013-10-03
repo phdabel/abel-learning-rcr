@@ -29,6 +29,7 @@ public class State extends BasicDBObject {
 			int waterAgent, int hpAgent, int fieryness, int temperature){
 		
 		this.setRun_id(run);
+		this.setExperiment_id(run.getExperiment());
 		this.setAgent_id(agent_id);
 		this.setTask_id(task_id);
 		this.setWaterAgent(waterAgent);
@@ -53,23 +54,28 @@ public class State extends BasicDBObject {
 	private void create(){
 		
 		put("time", time);
-		this.states.ensureIndex(new BasicDBObject("time", time));
 		put("agent_id", agent_id);
-		this.states.ensureIndex(new BasicDBObject("agent_id", agent_id));
 		put("task_id", task_id);
-		this.states.ensureIndex(new BasicDBObject("task_id", task_id));
 		put("experiment_id", experiment_id.getId());
-		this.states.ensureIndex(new BasicDBObject("experiment_id", experiment_id.getId()));
 		put("run_id", run_id.getId());
-		this.states.ensureIndex(new BasicDBObject("run_id", run_id.getId()));
-		this.states.ensureIndex(this.primaryKey);
+		
+		if(states.count()==0){
+			this.states.ensureIndex(new BasicDBObject("time", time));
+			this.states.ensureIndex(new BasicDBObject("agent_id", agent_id));
+			this.states.ensureIndex(new BasicDBObject("run_id", run_id.getId()));
+			this.states.ensureIndex(this.primaryKey);
+			this.states.ensureIndex(new BasicDBObject("task_id", task_id));
+			this.states.ensureIndex(new BasicDBObject("experiment_id", experiment_id.getId()));
+		}
 		
 		put("waterAgent", waterAgent);
 		put("hpAgent", hpAgent);
 		put("fieryness", fieryness);
 		put("temperature", temperature);
 		
-		states.insert(this);
+		if(states.count(this.primaryKey)==0){
+			states.insert(this);
+		}
 	}
 	
 	public int getTime() {

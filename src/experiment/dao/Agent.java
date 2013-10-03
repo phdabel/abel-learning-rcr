@@ -58,16 +58,25 @@ public class Agent extends BasicDBObject {
 	private void create(){
 		
 		put("id", entityID);
-		this.agents.ensureIndex(new BasicDBObject("id", entityID));
 		put("run_id", run.getId());
-		this.agents.ensureIndex(new BasicDBObject("run_id", run.getId()));
 		put("experiment_id", experiment.getId());
-		this.agents.ensureIndex(new BasicDBObject("experiment_id", experiment.getId()));
 		put("agentType", agentType);
 		put("resources", resources);
 		put("positions", this.getPosition());
-		this.agents.ensureIndex(this.primaryKey);
-		agents.insert(this);
+		
+		if(agents.count()==0)
+		{
+			this.agents.ensureIndex(new BasicDBObject("id", entityID));
+			this.agents.ensureIndex(new BasicDBObject("run_id", run.getId()));
+			this.agents.ensureIndex(new BasicDBObject("experiment_id", experiment.getId()));
+			
+			this.agents.ensureIndex(this.primaryKey);
+			
+		}
+		
+		if(agents.find(this.primaryKey).count() == 0){
+			agents.insert(this);
+		}
 	}
 	
 	// insere item na lista

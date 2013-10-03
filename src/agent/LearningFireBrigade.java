@@ -15,6 +15,8 @@ import com.mongodb.BasicDBObject;
 import experiment.dao.Agent;
 import experiment.dao.Experiment;
 import experiment.dao.Run;
+import experiment.dao.State;
+import experiment.dao.Task;
 import message.MessageType;
 import message.MyMessage;
 import rescuecore2.log.Logger;
@@ -175,6 +177,10 @@ public class LearningFireBrigade extends LearningAbstractAgent<FireBrigade> {
 	    			maxProbability = p2;
 	    			maxAction = b;
 	    		}
+	    		if(!this.tasks.isEmpty() && maxAction == null)
+	    		{
+	    			maxAction = this.tasks.keySet().iterator().next();
+	    		}
 	    		this.probability.put(b, p2);
 	    	}
 	    	if(maxAction != null){
@@ -208,6 +214,22 @@ public class LearningFireBrigade extends LearningAbstractAgent<FireBrigade> {
 	    		Double utilityTmp = (1 - this.alpha) * this.utility.get(maxAction) + this.alpha * reward;
 	    		this.utility.put(maxAction, utilityTmp);
 	    	}
+    	}else{
+    		Building b = (Building)model.getEntity(new EntityID(this.currentTarget));
+    		int fieryness = 0;
+    		if(b.isFierynessDefined())
+    		{
+    			fieryness = b.getFieryness();
+    		}
+    		int temperature = 0;
+    		if(b.isTemperatureDefined())
+    		{
+    			temperature = b.getTemperature();
+    		}
+    		State s = new State(this.getRun(), time, me().getID().getValue(), 
+    				this.currentTarget, me().getWater(), me().getHP(), fieryness, temperature);
+    		
+    		
     	}
         for (Command next : heard) {
             Logger.debug("Heard " + next);
@@ -293,6 +315,19 @@ public class LearningFireBrigade extends LearningAbstractAgent<FireBrigade> {
             if (next instanceof Building) {
                 Building b = (Building)next;
                 if (b.isOnFire()) {
+                	/**
+                	 *  informações da tarefa
+                	 */
+                	Task t = new Task(this.getRun(), b.getID().getValue(), "Building");
+                	t.updateBrokenness(b.getBrokenness());
+                	t.updateFieryness(b.getFieryness());
+                	t.updateFloor(b.getFloors());
+                	t.updateTemperature(b.getTemperature());
+                	t.updateTotalArea(b.getTotalArea());
+                	/**
+                	 * fim do envio de info da tarefa pro db
+                	 */
+                	
                     result.add(b);
                 }
             }
