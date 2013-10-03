@@ -11,22 +11,25 @@ public class Run extends BasicDBObject{
 	private int id;
 	private Experiment experiment_id;
 	private String date;
+	private BasicDBObject primaryKey;
 	
 	public Run(int id, Experiment experiment_id, String date){
 		
 		this.setId(id);
 		this.setExperiment_id(experiment_id);
 		this.setDate(date);
-		this.postData();
+		this.primaryKey = new BasicDBObject("id",this.id).append("experiment_id", experiment_id.getId());
+		this.create();
 		
 	}
 	
-	private WriteResult postData(){
+	private WriteResult create(){
 		
 		put("id", id);
 		this.runs.ensureIndex(new BasicDBObject("id", id));
 		put("experiment_id", experiment_id.getId());
 		this.runs.ensureIndex(new BasicDBObject("experiment_id", experiment_id.getId()));
+		runs.ensureIndex(this.primaryKey);
 		put("date", date);
 		return runs.insert(this);
 		

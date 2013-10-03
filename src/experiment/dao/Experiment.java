@@ -2,7 +2,6 @@ package experiment.dao;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
-import com.mongodb.WriteResult;
 
 
 public class Experiment extends BasicDBObject {
@@ -25,7 +24,7 @@ public class Experiment extends BasicDBObject {
 		this.setDate(date);
 		
 		
-		this.postData();
+		this.create();
 		
 		
 		
@@ -35,7 +34,7 @@ public class Experiment extends BasicDBObject {
 		return this.experiments;
 	}
 	
-	private void postData(){
+	private void create(){
 		
 		put("_id", id);
 		this.experiments.ensureIndex(new BasicDBObject("_id", id));

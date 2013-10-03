@@ -81,7 +81,7 @@ public final class LaunchLearningBrigade {
             Logger.error("Error connemongocting agents", e);
         }
     }
-
+    
     private static void connect(ComponentLauncher launcher, int fb, int pf, int at, Config config) throws InterruptedException, ConnectionException {
         int i = 0;
         

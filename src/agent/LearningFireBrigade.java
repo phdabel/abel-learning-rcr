@@ -75,10 +75,12 @@ public class LearningFireBrigade extends LearningAbstractAgent<FireBrigade> {
             eu.setType(MessageType.ANNOUNCE_AGENT);
             eu.setAgentID(me().getID());
             eu.setPosition(me().getPosition());
-            
+           
             this.sendMessage(time, 1, eu);
             
         }
+        this.agent.updateHP(me().getHP());
+        this.agent.updateWater(me().getWater());
         this.agent.appendPosition(me().getPosition().getValue());
         
         
