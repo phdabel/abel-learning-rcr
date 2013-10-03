@@ -1,10 +1,9 @@
 import agent.LearningFireBrigade;
 
-
 import java.io.IOException;
 
 import experiment.dao.Experiment;
-
+import experiment.dao.Run;
 import rescuecore2.components.ComponentLauncher;
 import rescuecore2.components.TCPComponentLauncher;
 import rescuecore2.components.ComponentConnectionException;
@@ -15,7 +14,6 @@ import rescuecore2.config.Config;
 import rescuecore2.config.ConfigException;
 import rescuecore2.Constants;
 import rescuecore2.log.Logger;
-
 import rescuecore2.standard.entities.StandardEntityFactory;
 import rescuecore2.standard.entities.StandardPropertyFactory;
 import rescuecore2.standard.messages.StandardMessageFactory;
@@ -30,7 +28,8 @@ public final class LaunchLearningBrigade {
     private static final String CIVILIAN_FLAG = "-cv";
 
     private LaunchLearningBrigade() {}
-    public static Experiment experiment = new Experiment(1, "experimento teste robocup");
+    public static Experiment experiment = new Experiment(1, "experimento teste robocup", "02-10-2013");
+    public static Run run = new Run(1, experiment, "02-10-2013");
 
     /**
        Launch 'em!
@@ -79,7 +78,7 @@ public final class LaunchLearningBrigade {
             Logger.error("Error connecting agents", e);
         }
         catch (InterruptedException e) {
-            Logger.error("Error connecting agents", e);
+            Logger.error("Error connemongocting agents", e);
         }
     }
 
@@ -89,7 +88,7 @@ public final class LaunchLearningBrigade {
         try {
             while (fb-- != 0) {
                 Logger.info("Connecting fire brigade " + (i++) + "...");
-                launcher.connect(new LearningFireBrigade(experiment, fb));
+                launcher.connect(new LearningFireBrigade(run, fb));
                 Logger.info("success");
             }
         }

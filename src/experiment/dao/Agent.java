@@ -16,6 +16,7 @@ public class Agent extends BasicDBObject {
 
 	DBCollection agents = Connection.getInstance().getCollection("Agents");
 	
+	private Run run = null;
 	private Experiment experiment = null;
 	private int entityID;
 	private String agentType;
@@ -24,9 +25,10 @@ public class Agent extends BasicDBObject {
 	
 	public Agent(){}
 	
-	public Agent(Experiment experiment, Integer entityID, String agentType, Integer resources){
+	public Agent(Run run, Integer entityID, String agentType, Integer resources){
 		
-		this.setExperiment(experiment);
+		this.setRun(run);
+		this.setExperiment(run.getExperiment());
 		this.setEntityID(entityID);
 		this.setAgentType(agentType);
 		this.setResources(resources);
@@ -38,20 +40,25 @@ public class Agent extends BasicDBObject {
 	
 	private void postData(){
 		
-		put("_id", entityID);
+		put("id", entityID);
+		this.agents.ensureIndex(new BasicDBObject("id", entityID));
+		put("run_id", run.getId());
+		this.agents.ensureIndex(new BasicDBObject("run_id", run.getId()));
+		put("experiment_id", experiment.getId());
+		this.agents.ensureIndex(new BasicDBObject("experiment_id", experiment.getId()));
 		put("agentType", agentType);
 		put("resources", resources);
 		put("positions", this.getPosition());
 		agents.insert(this);
+	
 		
-		BasicDBObject list = new BasicDBObject("agents", this);
-		BasicDBObject updateQuery = new BasicDBObject().append("$push", list);
-		this.getExperiment().experiments.update(this.getExperiment(), updateQuery);
-/**
- * DBObject listItem = new BasicDBObject("scores", new BasicDBObject("type","quiz").append("score",99));
-DBObject updateQuery = new BasicDBObject("$push", listItem);
-myCol.update(findQuery, updateQuery);
- */
+	}
+	
+	public void appendPosition(int position){
+		
+		agents.update(new BasicDBObject("id",this.entityID),
+				new BasicDBObject("$push",
+						new BasicDBObject("positions",position)),true,true);
 		
 	}
 	
@@ -69,7 +76,7 @@ myCol.update(findQuery, updateQuery);
 	}
 
 	public int getEntityID() {
-		return (int) this.getData("_id");
+		return (int) this.getData("id");
 	}
 
 	public void setEntityID(int entityID) {
@@ -100,12 +107,20 @@ myCol.update(findQuery, updateQuery);
 		this.position = position;
 	}
 
-	public void setExperiment(Experiment experiment) {
-		this.experiment = experiment;
+	public void setRun(Run run) {
+		this.run = run;
 	}
 	
-	private Experiment getExperiment(){
-		return this.experiment;
+	private Integer getRun(){
+		return (int)this.getData("run.id");
+	}
+
+	public Integer getExperiment() {
+		return (int)this.getData("experiment.id");
+	}
+
+	public void setExperiment(Experiment experiment) {
+		this.experiment = experiment;
 	}
 	
 

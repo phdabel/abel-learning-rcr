@@ -14,6 +14,7 @@ import com.mongodb.BasicDBObject;
 
 import experiment.dao.Agent;
 import experiment.dao.Experiment;
+import experiment.dao.Run;
 import message.MessageType;
 import message.MyMessage;
 import rescuecore2.log.Logger;
@@ -41,11 +42,11 @@ public class LearningFireBrigade extends LearningAbstractAgent<FireBrigade> {
     private Map<EntityID, Integer>walkCost = new HashMap<EntityID, Integer>();
     
 
-    public LearningFireBrigade(Experiment experiment, int fb) {
+    public LearningFireBrigade(Run run, int fb) {
 		super();
 		//ajusta o experimento para o valor passado como parâmetro no Launch
-		this.setExperiment(experiment);
-		this.agent = new Agent(experiment, fb, "fireBrigade", 5000);
+		this.setRun(run);
+		this.agent = new Agent(run, fb, "fireBrigade", 5000);
 		//this.agent.setCurrentPosition(me().getPosition().getValue());
 		
 	}
@@ -78,6 +79,7 @@ public class LearningFireBrigade extends LearningAbstractAgent<FireBrigade> {
             this.sendMessage(time, 1, eu);
             
         }
+        this.agent.appendPosition(me().getPosition().getValue());
         
         
         /**

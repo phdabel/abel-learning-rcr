@@ -14,6 +14,7 @@ import java.util.Set;
 
 import experiment.dao.Agent;
 import experiment.dao.Experiment;
+import experiment.dao.Run;
 import message.MessageType;
 import message.MyMessage;
 import message.Serializer;
@@ -41,7 +42,7 @@ public abstract class LearningAbstractAgent<E extends StandardEntity> extends St
 	protected Double tau = 0.5;
 	protected Double alpha = 0.5;
 	protected Agent agent = null;
-	private Experiment experiment = null;
+	private Run run = null;
 
     private static final String SAY_COMMUNICATION_MODEL = StandardCommunicationModel.class.getName();
     private static final String SPEAK_COMMUNICATION_MODEL = ChannelCommunicationModel.class.getName();
@@ -326,12 +327,12 @@ public abstract class LearningAbstractAgent<E extends StandardEntity> extends St
         return result;
     }
 
-	public Experiment getExperiment() {
-		return experiment;
+	public Run getRun() {
+		return run;
 	}
 
-	public void setExperiment(Experiment experiment) {
-		this.experiment = experiment;
+	public void setRun(Run run) {
+		this.run = run;
 	}
 
 }
